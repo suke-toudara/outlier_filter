@@ -1,35 +1,67 @@
 cmake_minimum_required(VERSION 3.8)
-project(outlier_filter)
+project(map_manager)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# find dependencies
-find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
 
-add_executable(outlier_filter src/outlier_filter.cpp)
-target_include_directories(outlier_filter PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(outlier_filter PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+#
+ament_auto_add_library(map_manager_component SHARED
+  src/map_manager.cpp
+)
+ament_auto_add_library(pcd_loader SHARED
+  src/pcd_loader.cpp
 
-install(TARGETS outlier_filter
-  DESTINATION lib/${PROJECT_NAME})
+)
+
+#
+target_link_libraries(map_manager_component ${YAML_CPP_LIBRARIES})
+
+#
+rclcpp_components_register_nodes(map_manager_component
+  "map_manager::MapManager"
+)
+rclcpp_components_register_nodes(pcd_loader
+  "map_manager::PCDMapLoader"
+)
+
+#
+ament_auto_add_executable(map_manager_node
+    NO_TARGET_LINK_LIBRARIES
+    src/map_manager_node.cpp
+)
+
+ament_auto_add_executable(pcd_loader_node
+    NO_TARGET_LINK_LIBRARIES
+    src/pcd_loader_node.cpp
+)
+
+#
+target_link_libraries(map_manager_node
+  map_manager_component
+)
+target_link_libraries(pcd_loader_node
+  pcd_loader
+)
+
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
+
+
+install(FILES DESTINATION share/${PROJECT_NAME})
+
+ament_auto_package(
+  INSTALL_TO_SHARE
+  launch
+  config
+)
