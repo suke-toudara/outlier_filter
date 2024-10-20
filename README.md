@@ -1,7 +1,9 @@
-WeatherNoiseRemover
+## WeatherNoiseRemover
+
 WeatherNoiseRemoverは、点群データに含まれる環境ノイズを除去するためのROS2パッケージです。特に、雨や霧によるノイズに対応しており、センサーの精度向上やデータのクリーンアップに役立ちます。本パッケージは、ボクセルグリッドフィルタを利用して点群データをダウンサンプリングし、占有率に基づいて一定以上の密度を持たないボクセルのデータを削除します。
 
-特徴
+### 特徴
+
 雨と霧に対応
 点群データに影響を与える雨や霧を効果的に除去することができます。これにより、センサーデータの精度が向上し、誤検知やノイズの影響を低減します。
 ボクセルグリッドフィルタ
@@ -11,12 +13,13 @@ WeatherNoiseRemoverは、点群データに含まれる環境ノイズを除去�
 インストール
 このパッケージを利用するためには、以下の手順でインストールを行ってください。
 
-bash
-コードをコピーする
+```
 git clone https://github.com/yourusername/WeatherNoiseRemover.git
 cd WeatherNoiseRemover
 colcon build --packages-select weather_noise_remover
-使用方法
+```
+
+### 使用方法
 WeatherNoiseRemoverは、以下のコマンドで起動することができます。
 
 ```
